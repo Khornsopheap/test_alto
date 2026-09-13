@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Search, ShoppingBag, User, Menu, X, ShoppingBasket } from "lucide-react";
 import { useCart } from "../context/CartContext";
-import { cn } from "../lib/utils";
 import { useAuth } from "../context/AuthContext";
-
+import { cn } from "../lib/utils";
+import ConfirmDialog from "./ConfirmDialog";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -15,8 +15,16 @@ const navLinks = [
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const { itemCount } = useCart();
   const { user, isLoggedIn, logout } = useAuth();
+  const navigate = useNavigate();
+
+  async function handleConfirmSignOut() {
+    await logout();
+    setUserMenuOpen(false);
+    navigate("/");
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-stone-50/95 backdrop-blur">
@@ -92,13 +100,19 @@ export default function Navbar() {
               <div className="absolute right-0 top-11 w-48 rounded-sm border border-line bg-stone-50 py-1 shadow-card animate-fade-in">
                 {isLoggedIn ? (
                   <>
+                    <div className="px-4 py-2 text-xs text-ink-300 truncate">{user?.email}</div>
                     <Link to="/orders" className="block px-4 py-2 text-sm text-ink hover:bg-stone-100" onClick={() => setUserMenuOpen(false)}>
                       My Orders
                     </Link>
                     <Link to="/admin/dashboard" className="block px-4 py-2 text-sm text-ink hover:bg-stone-100" onClick={() => setUserMenuOpen(false)}>
                       Admin
                     </Link>
-                    <button className="block w-full px-4 py-2 text-left text-sm text-rust hover:bg-stone-100">Sign out</button>
+                    <button
+                      onClick={() => setConfirmOpen(true)}
+                      className="block w-full px-4 py-2 text-left text-sm text-rust hover:bg-stone-100"
+                    >
+                      Sign out
+                    </button>
                   </>
                 ) : (
                   <Link
@@ -136,13 +150,23 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <Link to="/login" className="rounded-sm px-3 py-2.5 text-sm font-medium text-ink hover:bg-stone-100" onClick={() => setMobileOpen(false)}>
-                Sign in
-              </Link>
+              {!isLoggedIn && (
+                <Link to="/login" className="rounded-sm px-3 py-2.5 text-sm font-medium text-ink hover:bg-stone-100" onClick={() => setMobileOpen(false)}>
+                  Sign in
+                </Link>
+              )}
             </nav>
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={handleConfirmSignOut}
+        title="Sign out?"
+        description="You'll need to sign in again to access your account."
+      />
     </header>
   );
 }

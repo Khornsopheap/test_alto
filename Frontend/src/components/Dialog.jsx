@@ -1,8 +1,7 @@
 import { useEffect } from "react";
-import { X } from "lucide-react";
-import { cn } from "../lib/utils";
+import { createPortal } from "react-dom";
 
-export default function Dialog({ open, onClose, title, children, className }) {
+export default function Dialog({ open, onClose, title, children }) {
   useEffect(() => {
     function onKey(e) {
       if (e.key === "Escape") onClose?.();
@@ -13,34 +12,19 @@ export default function Dialog({ open, onClose, title, children, className }) {
 
   if (!open) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-ink/40 animate-fade-in"
-        onClick={onClose}
-        aria-hidden="true"
-      />
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
       <div
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={cn(
-          "relative z-10 w-full max-w-lg animate-slide-up rounded-sm border border-line bg-stone-50 p-6 shadow-card",
-          className
-        )}
+        className="relative z-10 w-full max-w-sm rounded-lg border border-gray-200 bg-white p-6 shadow-xl"
       >
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-display text-lg font-medium text-ink">{title}</h2>
-          <button
-            aria-label="Close dialog"
-            onClick={onClose}
-            className="rounded-sm p-1 text-ink-500 hover:bg-stone-200"
-          >
-            <X size={18} />
-          </button>
-        </div>
+        <h2 className="mb-3 text-lg font-semibold text-gray-900">{title}</h2>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

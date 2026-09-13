@@ -42,7 +42,7 @@ export default function Login() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input id="email" type="email" label="Email" placeholder="you@example.com" required />
+          <Input id="email" name="email" type="email" label="Email" placeholder="you@example.com" required />
           <div>
             <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-ink-700">
               Password
@@ -50,6 +50,7 @@ export default function Login() {
             <div className="relative">
               <input
                 id="password"
+                name="password"
                 type={showPassword ? "text" : "password"}
                 required
                 placeholder="••••••••"
