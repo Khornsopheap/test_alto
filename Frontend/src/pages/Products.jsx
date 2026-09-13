@@ -5,7 +5,8 @@ import PageHeader from "../components/PageHeader";
 import SearchBar from "../components/SearchBar";
 import ProductGrid from "../components/ProductGrid";
 import Button from "../components/Button";
-import { products, categories } from "../data/mockData";
+import api from "../lib/api";
+import { categories } from "../data/mockData";
 import { useCart } from "../context/CartContext";
 import { useToast } from "../components/Toast";
 
@@ -15,7 +16,7 @@ export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { addItem } = useCart();
   const { showToast } = useToast();
-
+  const [products, setProducts] = useState([]);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState(searchParams.get("category") || "all");
   const [priceRange, setPriceRange] = useState("all");
@@ -23,9 +24,16 @@ export default function Products() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
 
+  // Fetch API data and set loading state
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(t);
+    setLoading(true);
+    api
+      .get("/products")
+      .then((res) => {
+        setProducts(res.data);
+      })
+      .catch((err) => console.error("Failed to load products:", err))
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -35,10 +43,10 @@ export default function Products() {
   const filtered = useMemo(() => {
     let list = [...products];
     if (category !== "all") {
-      list = list.filter((p) => p.category.toLowerCase() === category);
+      list = list.filter((p) => p.category?.toLowerCase() === category);
     }
     if (query) {
-      list = list.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()));
+      list = list.filter((p) => p.name?.toLowerCase().includes(query.toLowerCase()));
     }
     if (priceRange !== "all") {
       const [min, max] = priceRange.split("-").map(Number);
@@ -48,7 +56,7 @@ export default function Products() {
     if (sortBy === "price-desc") list.sort((a, b) => b.price - a.price);
     if (sortBy === "rating") list.sort((a, b) => b.rating - a.rating);
     return list;
-  }, [query, category, priceRange, sortBy]);
+  }, [products, query, category, priceRange, sortBy]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
