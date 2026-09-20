@@ -6,7 +6,7 @@ import SearchBar from "../components/SearchBar";
 import ProductGrid from "../components/ProductGrid";
 import Button from "../components/Button";
 import api from "../lib/api";
-import { categories } from "../data/mockData";
+// import { categories } from "../data/mockData";
 import { useCart } from "../context/CartContext";
 import { useToast } from "../components/Toast";
 
@@ -23,6 +23,7 @@ export default function Products() {
   const [sortBy, setSortBy] = useState("featured");
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
 
   // Fetch API data and set loading state
   useEffect(() => {
@@ -40,10 +41,14 @@ export default function Products() {
     setPage(1);
   }, [query, category, priceRange, sortBy]);
 
+  useEffect(() => {
+    api.get("/categories").then((res) => setCategories(res.data));
+  }, []);
+
   const filtered = useMemo(() => {
     let list = [...products];
     if (category !== "all") {
-      list = list.filter((p) => p.category?.toLowerCase() === category);
+      list = list.filter((p) => p.category_id === category);
     }
     if (query) {
       list = list.filter((p) => p.name?.toLowerCase().includes(query.toLowerCase()));
@@ -89,7 +94,7 @@ export default function Products() {
           >
             <option value="all">All Categories</option>
             {categories.map((c) => (
-              <option key={c.id} value={c.id}>
+              <option key={c._id} value={c._id}>
                 {c.name}
               </option>
             ))}
