@@ -13,28 +13,6 @@ class ProductSeeder extends Seeder
 
         Product::create([
             'name' => 'Wireless Headphones',
-            'description' => 'Noise-cancelling over-ear headphones.',
-            'category' => 'Electronics',
-            'price' => 129.99,
-            'original_price' => 159.99,
-            'stock' => 40,
-            'rating' => 4.6,
-            'reviews' => 120,
-        ]);
-
-        Product::create([
-            'name' => 'Classic Cotton Tee',
-            'description' => 'Soft everyday crewneck t-shirt.',
-            'category' => 'Apparel',
-            'price' => 24.0,
-            'original_price' => null,
-            'stock' => 80,
-            'rating' => 4.3,
-            'reviews' => 65,
-        ]);
-
-        Product::create([
-            'name' => 'Wireless Headphones',
             'description' => 'Noise-cancelling over-ear headphones with deep bass.',
             'category' => 'Electronics',
             'price' => 129.99,
