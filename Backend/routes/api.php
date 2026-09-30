@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use Illuminate\Support\Facades\Route;
@@ -35,4 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/orders/{id}/khqr', [OrderController::class, 'generateKhqr']);
     Route::put('/orders/{id}/confirm-payment', [OrderController::class, 'confirmPayment']);
+
+    Route::get('/admin/dashboard/stats', [DashboardController::class, 'stats']);
 });

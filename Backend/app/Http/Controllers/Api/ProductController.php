@@ -39,6 +39,12 @@ class ProductController extends Controller
             'image' => 'nullable|image|max:4096',
         ]);
 
+        $validated['price'] = (float) $validated['price'];
+        $validated['stock'] = (int) $validated['stock'];
+        if (isset($validated['original_price'])) {
+            $validated['original_price'] = (float) $validated['original_price'];
+        }
+
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('products', 'public');
             $validated['image'] = '/storage/' . $path;
@@ -62,9 +68,20 @@ class ProductController extends Controller
             'stock' => 'sometimes|integer|min:0',
         ]);
 
-        $product->update($validated);
+        if (isset($validated['price'])) {
+            $validated['price'] = (float) $validated['price'];
+        }
+        if (isset($validated['stock'])) {
+            $validated['stock'] = (int) $validated['stock'];
+        }
+        if (isset($validated['original_price'])) {
+            $validated['original_price'] = (float) $validated['original_price'];
 
-        return response()->json($product);
+
+            $product->update($validated);
+
+            return response()->json($product);
+        }
     }
 
     public function destroy($id)
