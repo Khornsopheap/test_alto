@@ -3,7 +3,7 @@
 return [
     'paths' => ['api/*'],
     'allowed_methods' => ['*'],
-    'allowed_origins' => ['https://test-alto-frontend.onrender.com'],
+    'allowed_origins' => ['http://localhost:5173', 'https://test-alto-frontend.onrender.com'],
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],
     'exposed_headers' => [],
