@@ -116,7 +116,7 @@ return [
 
         'mongodb' => [
             'driver' => 'mongodb',
-            'dsn' => env('MONGO_DB_URI'),
+            'dsn' => env('MONGO_DB_DSN'),
             'database' => env('MONGO_DB_DATABASE', 'shop_catalog'),
         ],
 
